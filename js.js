@@ -1,5 +1,13 @@
 $(document).ready(function () {
 	let todos = [];
+
+	axios.get('http://localhost:3000/todo').then((resp) => {
+		console.log('--------resp', resp);
+		todos = [...resp.data];
+		id = resp.data.length;
+		toCount();
+		render(todos);
+	});
 	const $textBox = $('#text-box');
 	const $viewsForTodo = $('#container-for-elements');
 	const $buttonForAdd = $('#button-for-add');
@@ -159,9 +167,19 @@ $(document).ready(function () {
 				status: false
 			};
 			todos.push(obj);
+			axios.post('http://localhost:3000/todo', {
+				id: id++,
+				value: element,
+				status: false
+			}).then(function (res) {
+					console.log(res);
+				});
+
 			$textBox.val("");
 			toCount();
 			arraySorting(modelTabs);
+			console.log('--------todos', todos);
+			
 		}
 	};
 
