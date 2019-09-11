@@ -10,22 +10,26 @@
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
 </head>
 <body>
-    <div id="root">
-        <input type="text" id="text-box">
-        <input type="button" id="button-for-add" value="add">
-        <input type="button" id="button-for-check-array" value="check">
-        <input type="button" id="button-for-check-all-array" value="check All">
-        <input type="button" id="button-for-delete-all-elements" value="delete all">
-        <div id="container-for-elements">
+    <div class="container">
+        <h1 class="caption_todo">todos</h1>
+        <div class="forInputAndButton">
+        <input type="text" id="text-box" class="style-for-input" placeholder="enter todo">
+        <input type="button" id="button-for-add" value="add" class="style-for-input">
+        <input type="button" id="button-for-check-all-array" value="check All" class="style-for-input">
+        </div>
+        <div class="for_views_todo" id="container-for-elements">
             <ul id="list-of-items">
 
             </ul>
         </div>
-        <div>
+        <div class="forSpan">
             <p id="counter-elements">0 items left</p>
-            <input type="button" id="all-elements" value="All">
-            <input type="button" id="active-elements" value="Active">
-            <input type="button" id="completed-elements" value="Completed">
+        </div>
+        <div class="forButton">
+            <input type="button" class="ArraySorting style-for-input" id="all-elements" value="All" data-description="All">
+            <input type="button" class="ArraySorting style-for-input" id="active-elements" value="Active" data-description="Active">
+            <input type="button" class="ArraySorting style-for-input" id="completed-elements" value="Completed" data-description="Completed">
+            <input type="button" class="style-for-input" id="button-for-delete-all-elements" value="delete all">
         </div>
     </div>
 </body>

@@ -1,5 +1,5 @@
 $(document).ready(function () {
-	let array = [];
+	let todos = [];
 	const $textBox = $('#text-box');
 	const $viewsForTodo = $('#container-for-elements');
 	const $buttonForAdd = $('#button-for-add');
@@ -14,65 +14,133 @@ $(document).ready(function () {
 	const $completedElements = $('#completed-elements');
 	let id = 0;
 	const enterCode = 13;
+	let modelTabs = 'All';
 	const { _ } = window;
 
 	const toCount = function () {
-      $counterElements.text(array.length + ' items left');
-  };
-
-	const changeStateCheckbox = function () {
-      let attributeElement = Number(this.getAttribute('data-todo'));
-      array.forEach((item, i) => {
-          if (item.id === attributeElement) {
-             item.status = !item.status;
-          }
-      });
+			let countArray = todos.filter(item => item.status === false);
+      $counterElements.text(countArray.length + ' items left');
   };
 
 	const changeAllCheckbox = function () {
-     if((array.every(item => item.status)) === true){
+     if((todos.every(item => item.status)) === true){
          $listCheckbox.prop('checked', false);
-         array.forEach(item => item.status = false);
-     }else if((array.every(item => item.status)) === false){
+			 todos.forEach(item => item.status = false);
+     }else if((todos.every(item => item.status)) === false){
          $listCheckbox.prop('checked', true);
-        array.forEach(item => item.status = true);
+			 todos.forEach(item => item.status = true);
      }
+		toCount();
+     render(todos);
   };
 
-	const render = function () {
+	const changeStateCheckbox = function () {
+		let attributeElement = Number(this.getAttribute('data-todo'));
+		todos.forEach(item => {
+			if (item.id === attributeElement) {
+				item.status = !item.status;
+			}
+		});
+		toCount();
+		arraySorting(modelTabs);
+	};
+
+	const render = function (array) {
       $listOfItems.empty();
       let stringForAppend = '';
       $.each(array, (index, value) => {
          stringForAppend += `<li class="elementTodo" id="${value.id}">
             <input data-todo=${value.id} class='checkbox_for_todo' 
-            type='checkbox' ${value.status === true ? 'checked' : ''} >
+            type='checkbox' ${value.status === true ? 'checked' : ''}>            
             <span class='throughText'>${_.escape(value.value)}</span>
+           <input type="text" id=${value.id} class='edit' value='${_.escape(value.value)}'>
             <button type='button' data-rm=${value.id} class='close button_delete' aria-label='Close'>
             <span aria-hidden='true'>&times;</span></button>
            </li>`;
       });
-
       $listOfItems.append(stringForAppend);
 	};
 
+	const sortByTabs = function() {
+		modelTabs = $(this).data('description');
+		arraySorting(modelTabs);
+	};
+
+	const arraySorting = function(tab) {
+		let editArray = [];
+		switch(tab){
+			case 'All':
+				$allElements.addClass('active-tab');
+				$activeElements.removeClass('active-tab');
+				$completedElements.removeClass('active-tab');
+				editArray = todos;
+				break;
+			case 'Active':
+				$allElements.removeClass('active-tab');
+				$activeElements.addClass('active-tab');
+				$completedElements.removeClass('active-tab');
+				editArray = todos.filter(item => item.status === false);
+				break;
+			case 'Completed':
+				$allElements.removeClass('active-tab');
+				$activeElements.removeClass('active-tab');
+				$completedElements.addClass('active-tab');
+				editArray = todos.filter(item => item.status === true);
+				break;
+		}
+		render(editArray);
+	};
+
+	const getIndexOnId = function(numberId) {
+		const findIndexOnId = function(item) {
+			return Number(item.id) === Number(numberId);
+		};
+
+		return todos.findIndex(findIndexOnId);
+	};
+
+	const endEdit = function() {
+		const $todoEdit = $('.edited');
+		const idForEditTodo = $todoEdit.attr('id');
+		const itemIndex = getIndexOnId(idForEditTodo);
+		const $inputForEdit = $todoEdit.children('.edit');
+		const editValue = ($.trim($inputForEdit.prop('value')));
+		if (editValue === '' && $.trim(editValue) === '') {
+			$textBox.val("");
+		} else {
+			todos[itemIndex].value = editValue;
+			$todoEdit.removeClass('edited');
+			$(document).off('click.edit');
+		}
+		arraySorting(modelTabs);
+	};
+
+
+	const editDoubleClick = function() {
+		const variableElement = $(this.parentNode);
+		variableElement.addClass('edited');
+		variableElement.children('.edit').focus();
+		$(document).on('focusout.edit', variableElement.children('.edit'), endEdit);
+	};
+
+
+
 	const deleteEvens = function () {
         let attributeElement = Number(this.getAttribute('data-rm'));
-      array.forEach((item, i) => {
+		todos.forEach((item, i) => {
           if (item.id === attributeElement) {
-              array.splice(i, 1);
+						todos.splice(i, 1);
               toCount();
-              render();
+              render(todos);
           }
       });
   };
 
 	const buttonDeleteAll = function () {
-    array = array.filter(item => item.status === false);
+		todos = todos.filter(item => item.status === false);
       toCount();
-      render();
+      render(todos);
   };
-
-
 
 	const addElementInArray = function () {
 		let srting = $textBox.val();
@@ -85,15 +153,15 @@ $(document).ready(function () {
 				value: element,
 				status: false
 			};
-			array.push(obj);
+			todos.push(obj);
 			$textBox.val("");
 			toCount();
-			render();
+			arraySorting(modelTabs);
 		}
 	};
 
 	const checkArray = function () {
-		console.log(array);
+		console.log(todos);
 	};
 
 	const pushEnter = function (e) {
@@ -109,7 +177,8 @@ $(document).ready(function () {
 	$viewsForTodo.on('click','.button_delete',deleteEvens);
 	$buttonAllDelete.on('click',buttonDeleteAll);
 	$buttonCheckAll.on('click',changeAllCheckbox);
-
+	$allElements.on('click',sortByTabs);
+	$activeElements.on('click',sortByTabs);
+	$completedElements.on('click',sortByTabs);
+	$viewsForTodo.on('dblclick', '.throughText', editDoubleClick);
 });
-
-
