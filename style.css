@@ -87,3 +87,6 @@
     word-wrap: break-word;
     margin-left: 5px;
 }
+input:checked + span{
+    text-decoration: line-through;
+}
