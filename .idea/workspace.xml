@@ -2,8 +2,10 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="244d81e5-6452-4915-8c20-4b9163d1557c" name="Default Changelist" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/jquery.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/jquery.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/modules.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/modules.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/vcs.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/index.html" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/js.js" beforeDir="false" afterPath="$PROJECT_DIR$/js.js" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -16,8 +18,8 @@
     <option name="RECENT_TEMPLATES">
       <list>
         <option value="HTML File" />
-        <option value="JavaScript File" />
         <option value="CSS File" />
+        <option value="JavaScript File" />
       </list>
     </option>
   </component>
@@ -25,6 +27,7 @@
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
   <component name="ProjectId" id="1QakHCsUw1SdGQwrnIGQElo4tOU" />
+  <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
   <component name="PropertiesComponent">
     <property name="DefaultHtmlFileTemplate" value="HTML File" />
     <property name="WebServerToolWindowFactoryState" value="false" />
@@ -61,7 +64,13 @@
       <workItem from="1568124987806" duration="260000" />
       <workItem from="1568186417505" duration="311000" />
       <workItem from="1568188963467" duration="1591000" />
-      <workItem from="1568212090132" duration="2628000" />
+      <workItem from="1568212090132" duration="2667000" />
+      <workItem from="1568270829381" duration="25994000" />
+      <workItem from="1568299331895" duration="246000" />
+      <workItem from="1568299603798" duration="3693000" />
+      <workItem from="1568364962936" duration="504000" />
+      <workItem from="1568365484933" duration="22039000" />
+      <workItem from="1568632578524" duration="26000" />
     </task>
     <servers />
   </component>

@@ -1,17 +1,15 @@
 $(document).ready(function () {
 	let todos = [];
 
-	axios.get('http://localhost:3000/todo').then((resp) => {
-		console.log('--------resp', resp);
-		todos = [...resp.data];
-		id = resp.data.length;
+	axios.get('http://localhost:3000/todo').then((res) => {
+		todos = [...res.data];
+		id = res.data.length;
 		toCount();
 		render(todos);
 	});
 	const $textBox = $('#text-box');
 	const $viewsForTodo = $('#container-for-elements');
 	const $buttonForAdd = $('#button-for-add');
-	const $buttonForCheckArray = $('#button-for-check-array');
 	const $listOfItems = $('#list-of-items');
 	const $counterElements = $('#counter-elements');
 	const $buttonAllDelete = $('#button-for-delete-all-elements');
@@ -31,22 +29,31 @@ $(document).ready(function () {
 	};
 
 	const changeAllCheckbox = function () {
+		let bool;
 		if (todos.every(item => item.status)) {
 			$listCheckbox.prop('checked', false);
 			todos.forEach(item => item.status = false);
+			bool = false
 		} else if ((todos.every(item => item.status)) === false) {
 			$listCheckbox.prop('checked', true);
 			todos.forEach(item => item.status = true);
+			bool = true;
 		}
+		axios.put('http://localhost:3000/todo', {data:bool})
+			.then(res => console.log(res))
+			.catch(e => console.log(e));
 		toCount();
 		render(todos);
 	};
 
 	const changeStateCheckbox = function () {
-		let attributeElement = Number(this.getAttribute('data-todo'));
-		todos.forEach(item => {
-			if (item.id === attributeElement) {
+		let attributeElement = this.getAttribute('data-todo');
+		todos.forEach((item,i) => {
+			if (item._id === attributeElement) {
 				item.status = !item.status;
+				axios.put(`http://localhost:3000/todo/${item._id}`, todos[i])
+					.then(res => res.status)
+					.catch(e => console.log(e));
 			}
 		});
 		toCount();
@@ -57,12 +64,12 @@ $(document).ready(function () {
 		$listOfItems.empty();
 		let stringForAppend = '';
 		$.each(array, (index, value) => {
-			stringForAppend += `<li class="elementTodo" id="${value.id}">
-            <input data-todo=${value.id} class='checkbox_for_todo' 
+			stringForAppend += `<li class="elementTodo" id="${value._id}">
+            <input data-todo=${value._id} class='checkbox_for_todo' 
             type='checkbox' ${value.status === true ? 'checked' : ''}>            
             <span class='throughText'>${_.escape(value.value)}</span>
-           <input type="text" id=${value.id} class='edit' value='${_.escape(value.value)}'>
-            <button type='button' data-rm=${value.id} class='close button_delete' aria-label='Close'>
+           <input type="text" id=${value._id} class='edit' value='${_.escape(value.value)}'>
+            <button type='button' data-rm=${value._id} class='close button_delete' aria-label='Close'>
             <span aria-hidden='true'>&times;</span></button>
            </li>`;
 		});
@@ -116,13 +123,19 @@ $(document).ready(function () {
 	const endEdit = function () {
 		const $todoEdit = $('.edited');
 		const idForEditTodo = $todoEdit.attr('id');
-		const itemIndex = getIndexOnId(idForEditTodo);
 		const $inputForEdit = $todoEdit.children('.edit');
 		const editValue = ($.trim($inputForEdit.prop('value')));
 		if (editValue === '' && $.trim(editValue) === '') {
 			$textBox.val('');
 		} else {
-			todos[itemIndex].value = editValue;
+			todos.forEach((item,i) => {
+				if(idForEditTodo === item._id){
+					todos[i].value = editValue;
+					axios.put(`http://localhost:3000/todo/${idForEditTodo}`, todos[i])
+						.then(res => res.status)
+						.catch(e => console.log(e));
+				}
+			});
 			$todoEdit.removeClass('edited');
 			$(document).off('click.edit');
 		}
@@ -137,11 +150,14 @@ $(document).ready(function () {
 		$(document).on('focusout.edit', variableElement.children('.edit'), endEdit);
 	};
 
-
 	const deleteEvens = function () {
-		let attributeElement = Number(this.getAttribute('data-rm'));
+		let attributeElement = this.getAttribute('data-rm');
 		todos.forEach((item, i) => {
-			if (item.id === attributeElement) {
+			if (item._id === attributeElement) {
+				console.log(item);
+				axios.delete(`http://localhost:3000/todo/${item._id}`, {data:todos[i]})
+					.then(res => console.log(res))
+					.catch( e => console.log(e));
 				todos.splice(i, 1);
 				toCount();
 				render(todos);
@@ -151,6 +167,9 @@ $(document).ready(function () {
 
 	const buttonDeleteAll = function () {
 		todos = todos.filter(item => item.status === false);
+		axios.delete('http://localhost:3000/todo', {data:todos})
+			.then(res => console.log(res))
+			.catch( e => console.log(e));
 		toCount();
 		render(todos);
 	};
@@ -162,29 +181,19 @@ $(document).ready(function () {
 			alert('Enter text!');
 		} else {
 			let obj = {
-				id: id++,
-				value: element,
-				status: false
+				_id:`${id++}`,
+				value: element
 			};
 			todos.push(obj);
 			axios.post('http://localhost:3000/todo', {
-				id: id++,
-				value: element,
-				status: false
-			}).then(function (res) {
-					console.log(res);
-				});
-
+				value: obj.value,
+			}).then(res => res.status)
+				.catch(e => console.log(e));
+			console.log(todos);
 			$textBox.val("");
 			toCount();
 			arraySorting(modelTabs);
-			console.log('--------todos', todos);
-			
 		}
-	};
-
-	const checkArray = function () {
-		console.log(todos);
 	};
 
 	const pushEnter = function (e) {
@@ -194,7 +203,6 @@ $(document).ready(function () {
 	};
 
 	$buttonForAdd.on('click', addElementInArray);
-	$buttonForCheckArray.on('click', checkArray);
 	$textBox.on('keypress', pushEnter);
 	$viewsForTodo.on('click', '.checkbox_for_todo', changeStateCheckbox);
 	$viewsForTodo.on('click', '.button_delete', deleteEvens);
